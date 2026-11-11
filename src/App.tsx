@@ -114,7 +114,7 @@ export const App: React.FC = () => {
         <LineageSection />
       </main>
 
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed safe-bottom-fab z-40">
         <button
           type="button"
           onClick={() => setGroundingOpen(true)}

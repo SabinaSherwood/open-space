@@ -1,6 +1,7 @@
 import { Compass, HeartHandshake, Menu, Share2, Sparkles, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import type { SectionId } from '../types';
+import { InstallAppButton } from './InstallAppButton';
 import { SoundscapeControl } from './SoundscapeControl';
 
 interface NavbarProps {
@@ -57,8 +58,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 glass-panel border-b border-stone-200/60 transition-all duration-500 ${
-        scrolled ? 'py-3 shadow-xs bg-stone-100/85' : 'py-4 bg-stone-50/75'
+      className={`fixed top-0 left-0 w-full z-50 glass-panel border-b border-stone-200/60 safe-top-header transition-all duration-500 ${
+        scrolled ? 'pb-3 shadow-xs bg-stone-100/85' : 'pb-4 bg-stone-50/75'
       }`}
     >
       <nav aria-label="Primary" className="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center">
@@ -104,6 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         <div className="hidden lg:flex items-center gap-3">
           <SoundscapeControl />
+          <InstallAppButton />
           <button
             type="button"
             onClick={handleShare}
@@ -183,6 +185,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
           <div className="pt-4 border-t border-stone-200/60 flex flex-col gap-2">
+            <InstallAppButton mobileFullWidth />
             <button
               type="button"
               onClick={() => handleNavClick('practice')}
