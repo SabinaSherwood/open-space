@@ -33,7 +33,7 @@ export const PRACTICE_STAGES: PracticeStage[] = [
     ],
     invitation:
       'You remain the authority over your practice. Feel free to shift position, stretch, or open your eyes whenever you wish.',
-    ambientFreqHz: 174,
+    ambientFreqHz: 110,
   },
   {
     id: 'stage-2',
@@ -55,7 +55,7 @@ export const PRACTICE_STAGES: PracticeStage[] = [
     ],
     invitation:
       'You do not need to force a quiet mind. Whatever appears is welcome to exist in this open context.',
-    ambientFreqHz: 285,
+    ambientFreqHz: 130.81,
   },
   {
     id: 'stage-3',
@@ -76,8 +76,8 @@ export const PRACTICE_STAGES: PracticeStage[] = [
       'How does it feel to rest in the spacious presence that receives all experience?',
     ],
     invitation:
-      'If this inquiry feels abstract, simply return to the gentle feeling of your natural breath resting in open space.',
-    ambientFreqHz: 432,
+      'If this inquiry feels abstract, simply return to the gentle feeling of your natural breath resting in quiet ground.',
+    ambientFreqHz: 146.83,
   },
   {
     id: 'stage-4',
@@ -99,7 +99,7 @@ export const PRACTICE_STAGES: PracticeStage[] = [
     ],
     invitation:
       'Rest in this open expanse for as long as feels nourishing to your nervous system.',
-    ambientFreqHz: 528,
+    ambientFreqHz: 164.81,
   },
   {
     id: 'stage-5',
@@ -108,7 +108,7 @@ export const PRACTICE_STAGES: PracticeStage[] = [
     subtitle: 'Carrying open awareness into movement, relationship, and action',
     durationMinutes: 5,
     description:
-      'Bridging formal contemplative rest with active living. Recognizing that open space is not separate from daily conversation, creative work, or ordinary movement.',
+      'Bridging formal contemplative rest with active living. Recognizing that quiet ground is not separate from daily conversation, creative work, or ordinary movement.',
     guidanceText: [
       'Slowly bring subtle movement back into your fingers, toes, and neck.',
       'Gently open your eyes, taking in colors, light, and shapes in your room without immediately labeling or categorizing them.',
@@ -120,26 +120,16 @@ export const PRACTICE_STAGES: PracticeStage[] = [
       'What changes when you view your environment as a living, interconnected whole?',
     ],
     invitation: 'Thank yourself for offering your body and mind this spacious time.',
-    ambientFreqHz: 639,
+    ambientFreqHz: 196,
   },
 ];
 
 export const BREATH_PATTERNS: BreathPattern[] = [
   {
-    id: 'relaxing',
-    name: 'Restorative Unwinding (4 - 7 - 8)',
-    description:
-      'A classic vagal regulation cycle: 4s gentle inhale, 7s spacious hold in still awareness, 8s soft dissolving exhale to ease tension.',
-    inhaleSec: 4,
-    holdInSec: 7,
-    exhaleSec: 8,
-    holdOutSec: 0,
-  },
-  {
     id: 'gentle',
     name: 'Gentle Flow (4 - 6)',
     description:
-      'Elongates the exhale softly to soothe the sympathetic nervous system and settle racing thoughts.',
+      'Zero breath-hold. Softly elongates the exhale (4s in, 6s out) to cue parasympathetic safety without triggering air hunger.',
     inhaleSec: 4,
     holdInSec: 0,
     exhaleSec: 6,
@@ -149,10 +139,20 @@ export const BREATH_PATTERNS: BreathPattern[] = [
     id: 'box',
     name: 'Equal Grounding Box (4 - 4 - 4 - 4)',
     description:
-      'Equally balanced rhythm across all phases to foster centered focus and somatic stabilization.',
+      'Equally balanced rhythm across all four phases to foster centered focus and steady somatic stabilization.',
     inhaleSec: 4,
     holdInSec: 4,
     exhaleSec: 4,
     holdOutSec: 4,
+  },
+  {
+    id: 'relaxing',
+    name: 'Restorative Unwinding (4 - 7 - 8)',
+    description:
+      'Deeper stillness option when settled: 4s gentle inhale, 7s unhurried pause, and 8s soft dissolving exhale.',
+    inhaleSec: 4,
+    holdInSec: 7,
+    exhaleSec: 8,
+    holdOutSec: 0,
   },
 ];

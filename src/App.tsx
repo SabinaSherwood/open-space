@@ -13,14 +13,16 @@ import { Navbar } from './components/Navbar';
 import { PracticeSection } from './components/PracticeSection';
 import type { JournalEntry, NewJournalEntry, SectionId } from './types';
 
-const JOURNAL_STORAGE_KEY = 'open_space_journal_entries';
+const JOURNAL_STORAGE_KEY = 'quiet_ground_journal_entries';
+const LEGACY_STORAGE_KEY = 'open_space_journal_entries';
 
 export const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<SectionId>('hero');
   const [groundingOpen, setGroundingOpen] = useState<boolean>(false);
   const [entries, setEntries] = useState<JournalEntry[]>(() => {
     try {
-      const saved = localStorage.getItem(JOURNAL_STORAGE_KEY);
+      const saved =
+        localStorage.getItem(JOURNAL_STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
       if (saved) {
         return JSON.parse(saved) as JournalEntry[];
       }
@@ -81,6 +83,13 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#181816] text-[#e8e3d5] selection:bg-sage-200 selection:text-sage-800">
+      <a
+        href="#hero-heading"
+        className="visually-hidden fixed top-3 left-3 z-[60] px-4 py-2 rounded-full bg-sage-700 text-stone-50 text-xs font-semibold shadow-md"
+      >
+        Skip to main content
+      </a>
+
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -107,11 +116,15 @@ export const App: React.FC = () => {
 
       <div className="fixed bottom-6 right-6 z-40">
         <button
+          type="button"
           onClick={() => setGroundingOpen(true)}
-          className="px-4 py-3 rounded-full bg-[#7e956b] text-white hover:bg-[#6e845c] shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 cursor-pointer border border-[#8ea67a] text-xs font-medium backdrop-blur-md group"
-          title="Instant Trauma-Informed Grounding Reset"
+          aria-label="Grounding Reset"
+          className="px-4 py-3 rounded-full bg-sage-700 text-stone-50 hover:bg-sage-800 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 cursor-pointer border border-sage-800/60 text-xs font-semibold backdrop-blur-md group"
         >
-          <HeartHandshake className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
+          <HeartHandshake
+            aria-hidden="true"
+            className="w-4 h-4 text-stone-50 group-hover:scale-110 transition-transform"
+          />
           <span className="hidden sm:inline-block">Grounding Reset</span>
         </button>
       </div>

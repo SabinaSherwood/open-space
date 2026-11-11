@@ -6,7 +6,7 @@ import { soundscape } from '../utils/soundscape';
 const SOUNDSCAPE_OPTIONS: Array<{
   id: Exclude<SoundscapeType, 'none'>;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' }>;
 }> = [
   { id: 'forest_stream', label: 'Forest Stream', icon: Waves },
   { id: 'alpine_wind', label: 'Alpine Breeze', icon: Wind },
@@ -46,7 +46,7 @@ export const SoundscapeControl: React.FC = () => {
       setIsPlaying(false);
     } else {
       soundscape.setVolume(volume);
-      soundscape.startSoundscape(selectedId, 432);
+      soundscape.startSoundscape(selectedId, 130.81);
       setIsPlaying(true);
     }
   };
@@ -54,10 +54,10 @@ export const SoundscapeControl: React.FC = () => {
   const handleSelectOption = (id: Exclude<SoundscapeType, 'none'>) => {
     setSelectedId(id);
     if (isPlaying) {
-      soundscape.startSoundscape(id, 432);
+      soundscape.startSoundscape(id, 130.81);
     } else {
       soundscape.setVolume(volume);
-      soundscape.startSoundscape(id, 432);
+      soundscape.startSoundscape(id, 130.81);
       setIsPlaying(true);
     }
   };
@@ -76,35 +76,39 @@ export const SoundscapeControl: React.FC = () => {
     <div className="relative inline-block text-left" ref={containerRef}>
       <div className="flex items-center gap-1 rounded-full p-0.5 bg-stone-100/90 border border-stone-200/70 shadow-2xs">
         <button
+          type="button"
           onClick={handleTogglePlay}
+          aria-pressed={isPlaying}
           className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center relative ${
             isPlaying
-              ? 'bg-sage-600 text-white shadow-xs hover:bg-sage-700 ring-2 ring-sage-600/30'
+              ? 'bg-sage-700 text-stone-50 shadow-xs hover:bg-sage-800 ring-2 ring-sage-600/30'
               : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'
           }`}
-          title={isPlaying ? 'Pause Ambient Soundscape' : 'Play Ambient Soundscape'}
-          aria-label={isPlaying ? 'Pause Ambient Soundscape' : 'Play Ambient Soundscape'}
+          aria-label={isPlaying ? 'Pause ambient soundscape' : 'Play ambient soundscape'}
         >
           {isPlaying ? (
             <>
-              <Volume2 className="w-4 h-4 animate-pulse" />
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border border-white" />
+              <Volume2 aria-hidden="true" className="w-4 h-4 animate-pulse" />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border border-stone-50" />
             </>
           ) : (
-            <VolumeX className="w-4 h-4" />
+            <VolumeX aria-hidden="true" className="w-4 h-4" />
           )}
         </button>
 
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-label={`Soundscape options, current: ${activeOption.label}`}
           className="px-2 py-1 rounded-full text-xs font-medium text-stone-700 hover:text-stone-900 hover:bg-stone-200/50 transition-colors flex items-center gap-1 cursor-pointer"
-          title="Soundscape settings"
         >
-          <ActiveIcon className="w-3.5 h-3.5 text-sage-600" />
+          <ActiveIcon aria-hidden="true" className="w-3.5 h-3.5 text-sage-600" />
           <span className="hidden sm:inline font-sans text-[11px] text-stone-600">
             {activeOption.label}
           </span>
           <ChevronDown
+            aria-hidden="true"
             className={`w-3 h-3 text-stone-400 transition-transform duration-200 ${
               isOpen ? 'rotate-180' : ''
             }`}
@@ -124,6 +128,8 @@ export const SoundscapeControl: React.FC = () => {
               return (
                 <button
                   key={option.id}
+                  type="button"
+                  aria-pressed={isSelected}
                   onClick={() => handleSelectOption(option.id)}
                   className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                     isSelected
@@ -133,6 +139,7 @@ export const SoundscapeControl: React.FC = () => {
                 >
                   <div className="flex items-center gap-2">
                     <OptionIcon
+                      aria-hidden="true"
                       className={`w-3.5 h-3.5 ${
                         isSelected ? 'text-sage-700' : 'text-stone-400'
                       }`}
@@ -149,13 +156,12 @@ export const SoundscapeControl: React.FC = () => {
 
           <div className="pt-2 border-t border-stone-200/60 px-2">
             <div className="flex justify-between items-center text-[11px] text-stone-500 mb-1 font-light">
-              <span>Volume</span>
+              <label htmlFor="soundscape-volume">Volume</label>
               <span>{Math.round(volume * 100)}%</span>
             </div>
             <input
               id="soundscape-volume"
               name="soundscape-volume"
-              aria-label="Ambient soundscape volume"
               type="range"
               min="0"
               max="0.5"

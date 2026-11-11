@@ -10,7 +10,7 @@ const LINEAGE_CARDS = [
   {
     title: 'Dr. Daniel P. Brown Synthesis',
     description:
-      'Open Space honors the groundbreaking work of the late Dr. Daniel P. Brown (Harvard Medical School), whose meticulous translations and Western psychological synthesis of the "Pointing Out Way" rendered Mahamudra gradual meditation accessible to contemporary minds without diluting its rigor.',
+      'Quiet Ground honors the groundbreaking work of the late Dr. Daniel P. Brown (Harvard Medical School), whose meticulous translations and Western psychological synthesis of the "Pointing Out Way" rendered Mahamudra gradual meditation accessible to contemporary minds without diluting its rigor.',
   },
 ];
 

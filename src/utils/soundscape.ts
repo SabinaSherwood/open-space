@@ -69,7 +69,7 @@ export class SoundscapeEngine {
     return this.currentVolume;
   }
 
-  public startSoundscape(type: SoundscapeType = 'root_drone', baseFreq = 216): void {
+  public startSoundscape(type: SoundscapeType = 'root_drone', baseFreq = 130.81): void {
     try {
       this.initCtx();
       if (!this.ctx) return;
@@ -96,11 +96,11 @@ export class SoundscapeEngine {
         this.osc2.frequency.setValueAtTime(baseFreq * 1.5, now);
 
         const fifthGain = this.ctx.createGain();
-        fifthGain.gain.setValueAtTime(0.25, now);
+        fifthGain.gain.setValueAtTime(0.22, now);
 
         const lowpass = this.ctx.createBiquadFilter();
         lowpass.type = 'lowpass';
-        lowpass.frequency.setValueAtTime(450, now);
+        lowpass.frequency.setValueAtTime(380, now);
 
         this.osc1.connect(this.masterGain);
         this.osc2.connect(fifthGain);
@@ -152,7 +152,7 @@ export class SoundscapeEngine {
 
         this.osc1 = this.ctx.createOscillator();
         this.osc1.type = 'sine';
-        this.osc1.frequency.setValueAtTime(136.1, now);
+        this.osc1.frequency.setValueAtTime(110, now);
 
         const droneGain = this.ctx.createGain();
         droneGain.gain.setValueAtTime(0.1, now);
@@ -203,7 +203,7 @@ export class SoundscapeEngine {
 
         this.osc1 = this.ctx.createOscillator();
         this.osc1.type = 'sine';
-        this.osc1.frequency.setValueAtTime(108, now);
+        this.osc1.frequency.setValueAtTime(98, now);
 
         const droneGain = this.ctx.createGain();
         droneGain.gain.setValueAtTime(0.08, now);
@@ -231,14 +231,14 @@ export class SoundscapeEngine {
         this.osc3.frequency.setValueAtTime(baseFreq * 5.4, now);
 
         const overtone1Gain = this.ctx.createGain();
-        overtone1Gain.gain.setValueAtTime(0.15, now);
+        overtone1Gain.gain.setValueAtTime(0.14, now);
 
         const overtone2Gain = this.ctx.createGain();
-        overtone2Gain.gain.setValueAtTime(0.08, now);
+        overtone2Gain.gain.setValueAtTime(0.06, now);
 
         const lowpass = this.ctx.createBiquadFilter();
         lowpass.type = 'lowpass';
-        lowpass.frequency.setValueAtTime(800, now);
+        lowpass.frequency.setValueAtTime(750, now);
 
         this.osc1.connect(this.masterGain);
         this.osc2.connect(overtone1Gain);
@@ -291,31 +291,44 @@ export class SoundscapeEngine {
     }
   }
 
-  public playGentleChime(freq = 432): void {
+  public playGentleChime(freq = 293.66): void {
     try {
       this.initCtx();
       if (!this.ctx) return;
 
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
+      const fifth = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
+      const fifthGain = this.ctx.createGain();
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now);
+      fifth.type = 'sine';
+      fifth.frequency.setValueAtTime(freq * 1.5, now);
+
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.12, now + 0.12);
+      gain.gain.linearRampToValueAtTime(0.11, now + 0.14);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.8);
+
+      fifthGain.gain.setValueAtTime(0, now);
+      fifthGain.gain.linearRampToValueAtTime(0.035, now + 0.16);
+      fifthGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
 
       const lowpass = this.ctx.createBiquadFilter();
       lowpass.type = 'lowpass';
-      lowpass.frequency.setValueAtTime(1000, now);
+      lowpass.frequency.setValueAtTime(720, now);
 
       osc.connect(gain);
+      fifth.connect(fifthGain);
       gain.connect(lowpass);
+      fifthGain.connect(lowpass);
       lowpass.connect(this.ctx.destination);
 
       osc.start(now);
+      fifth.start(now);
       osc.stop(now + 4);
+      fifth.stop(now + 3);
     } catch (err) {
       console.warn('Audio chime warning', err);
     }

@@ -44,7 +44,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
       now.getDate(),
     ).padStart(2, '0')}`;
     link.setAttribute('href', dataUri);
-    link.setAttribute('download', `open-space-notes-${dateStr}.json`);
+    link.setAttribute('download', `quiet-ground-notes-${dateStr}.json`);
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -59,7 +59,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sage-100 text-sage-800 text-xs font-medium mb-3">
-              <BookOpen className="w-3.5 h-3.5 text-sage-600" />
+              <BookOpen aria-hidden="true" className="w-3.5 h-3.5 text-sage-600" />
               <span>Integration Space</span>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl font-medium text-stone-900">
@@ -74,19 +74,21 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
           <div className="flex items-center gap-3">
             {entries.length > 0 && (
               <button
+                type="button"
                 onClick={handleExport}
                 className="px-4 py-2 rounded-full bg-stone-200/80 hover:bg-stone-200 text-stone-700 text-xs font-medium flex items-center gap-1.5 cursor-pointer"
-                title="Download your notes locally"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download aria-hidden="true" className="w-3.5 h-3.5" />
                 <span>Export Notes</span>
               </button>
             )}
             <button
+              type="button"
+              aria-expanded={showForm}
               onClick={() => setShowForm(!showForm)}
-              className="px-5 py-2.5 rounded-full bg-sage-700 hover:bg-sage-600 text-white text-xs font-medium flex items-center gap-2 cursor-pointer shadow-2xs"
+              className="px-5 py-2.5 rounded-full bg-sage-700 hover:bg-sage-800 text-stone-50 text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-2xs"
             >
-              <Plus className="w-4 h-4" />
+              <Plus aria-hidden="true" className="w-4 h-4" />
               <span>New Reflection</span>
             </button>
           </div>
@@ -97,15 +99,16 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
             onSubmit={handleSubmit}
             className="bg-stone-50 p-6 sm:p-8 rounded-[2rem] border border-sage-200/80 shadow-2xs mb-10 space-y-6"
           >
-            <div>
-              <label className="block text-xs font-medium text-stone-800 mb-2">
+            <fieldset className="border-0 p-0 m-0">
+              <legend className="block text-xs font-medium text-stone-800 mb-2">
                 Nervous System State Tag
-              </label>
+              </legend>
               <div className="flex flex-wrap gap-2">
                 {STATE_TAGS.map((tag) => (
                   <button
                     key={tag.name}
                     type="button"
+                    aria-pressed={selectedState === tag.name}
                     onClick={() => setSelectedState(tag.name)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer ${
                       selectedState === tag.name
@@ -117,7 +120,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
                   </button>
                 ))}
               </div>
-            </div>
+            </fieldset>
 
             <div>
               <label
@@ -131,10 +134,10 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
                 name="journal-somatic-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="How did your body and attention feel during practice? (e.g., Softened jaw, noticed thoughts settling)..."
+                placeholder="Example: Softened jaw, noticed thoughts settling..."
                 rows={3}
                 required
-                className="w-full p-4 rounded-xl bg-stone-100/80 border border-stone-200 text-xs text-stone-800 placeholder-stone-400 focus:outline-hidden focus:ring-1 focus:ring-sage-600 resize-none"
+                className="w-full p-4 rounded-xl bg-stone-100/80 border border-stone-200 text-xs text-stone-800 placeholder-stone-400 focus:outline-hidden focus:ring-1 focus:ring-sage-600 resize-y"
               />
             </div>
 
@@ -151,7 +154,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
                 type="text"
                 value={insights}
                 onChange={(e) => setInsights(e.target.value)}
-                placeholder="e.g., Awareness doesn't need effort to remain open..."
+                placeholder="Example: Awareness doesn't need effort to remain open..."
                 className="w-full p-3.5 rounded-xl bg-stone-100/80 border border-stone-200 text-xs text-stone-800 placeholder-stone-400 focus:outline-hidden focus:ring-1 focus:ring-sage-600"
               />
             </div>
@@ -166,7 +169,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 rounded-full bg-sage-700 text-white text-xs font-medium cursor-pointer hover:bg-sage-600"
+                className="px-6 py-2 rounded-full bg-sage-700 text-stone-50 text-xs font-semibold cursor-pointer hover:bg-sage-800"
               >
                 Save Reflection
               </button>
@@ -176,7 +179,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
 
         {entries.length === 0 ? (
           <div className="bg-stone-50 rounded-[2rem] p-12 text-center border border-stone-200/60">
-            <Sparkles className="w-8 h-8 text-stone-400 mx-auto mb-3" />
+            <Sparkles aria-hidden="true" className="w-8 h-8 text-stone-400 mx-auto mb-3" />
             <h3 className="font-display text-lg font-medium text-stone-800 mb-1">
               Your Space is Clear
             </h3>
@@ -185,6 +188,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
               appear safely here.
             </p>
             <button
+              type="button"
               onClick={() => setShowForm(true)}
               className="px-5 py-2.5 rounded-full bg-stone-200 text-stone-800 text-xs font-medium cursor-pointer hover:bg-stone-300"
             >
@@ -201,7 +205,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-[10px] font-mono text-stone-500 flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
+                      <Calendar aria-hidden="true" className="w-3 h-3" />
                       {entry.timestamp}
                     </span>
                     <span className="text-[10px] font-medium px-3 py-1 rounded-full bg-sage-100 text-sage-800 border border-sage-200/60">
@@ -225,11 +229,12 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
 
                 <div className="mt-4 pt-3 border-t border-stone-200/50 flex justify-end">
                   <button
+                    type="button"
+                    aria-label={`Delete reflection from ${entry.timestamp}`}
                     onClick={() => onDeleteEntry(entry.id)}
-                    className="p-1.5 rounded-full text-stone-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                    title="Delete entry"
+                    className="p-1.5 rounded-full text-stone-400 hover:text-red-400 hover:bg-red-950/40 transition-colors cursor-pointer"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 aria-hidden="true" className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>

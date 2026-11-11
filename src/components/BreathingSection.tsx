@@ -25,12 +25,12 @@ export const BreathingSection: React.FC = () => {
             } else {
               setPhase('Exhale');
             }
-            soundscape.playGentleChime(432);
+            soundscape.playGentleChime(293.66);
             return 0;
           }
           if (phase === 'Hold' && next >= pattern.holdInSec) {
             setPhase('Exhale');
-            soundscape.playGentleChime(396);
+            soundscape.playGentleChime(261.63);
             return 0;
           }
           if (phase === 'Exhale' && next >= pattern.exhaleSec) {
@@ -40,13 +40,13 @@ export const BreathingSection: React.FC = () => {
               setPhase('Inhale');
               setCompletedCycles((c) => c + 1);
             }
-            soundscape.playGentleChime(528);
+            soundscape.playGentleChime(329.63);
             return 0;
           }
           if (phase === 'Pause' && next >= pattern.holdOutSec) {
             setPhase('Inhale');
             setCompletedCycles((c) => c + 1);
-            soundscape.playGentleChime(432);
+            soundscape.playGentleChime(293.66);
             return 0;
           }
           return next;
@@ -115,16 +115,17 @@ export const BreathingSection: React.FC = () => {
       <div className="max-w-5xl mx-auto relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-100/90 border border-stone-200/60 text-stone-700 text-xs font-medium mb-4">
-            <Wind className="w-3.5 h-3.5 text-sage-600" />
+            <Wind aria-hidden="true" className="w-3.5 h-3.5 text-sage-600" />
             <span>Somatic Vagal Co-Regulation</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-medium text-stone-900 mb-4">
             Restorative Breath &amp; Soundscape
           </h2>
           <p className="text-stone-700 text-sm sm:text-base font-light leading-relaxed">
-            Feat. <strong>4-7-8 Restorative Unwinding</strong>: 4 seconds gentle inhale, 7 seconds
-            stillness hold in open awareness, and 8 seconds soft releasing exhale. Accompanied by
-            continuous ambient soundscapes to anchor your nervous system.
+            Starts gently with <strong>4-6 Gentle Flow</strong> (4 seconds soft inhale, 6 seconds
+            unhurried exhale, zero breath-hold) to cue vagal safety—with optional{' '}
+            <strong>4-4-4-4 Grounding Box</strong> and <strong>4-7-8 Restorative Unwinding</strong>{' '}
+            whenever deeper stillness feels comfortable.
           </p>
         </div>
 
@@ -134,6 +135,8 @@ export const BreathingSection: React.FC = () => {
             return (
               <button
                 key={item.id}
+                type="button"
+                aria-pressed={isSelected}
                 onClick={() => {
                   setPattern(item);
                   handleReset();
@@ -152,7 +155,9 @@ export const BreathingSection: React.FC = () => {
                   >
                     {item.name}
                   </h3>
-                  {isSelected && <Sparkles className="w-3.5 h-3.5 text-sage-600" />}
+                  {isSelected && (
+                    <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-sage-600" />
+                  )}
                 </div>
                 <p className="text-xs text-stone-600 font-light leading-relaxed">
                   {item.description}
@@ -185,6 +190,7 @@ export const BreathingSection: React.FC = () => {
 
           <div className="relative my-6 flex items-center justify-center w-[260px] h-[260px] sm:w-[320px] sm:h-[320px] z-10">
             <div
+              aria-hidden="true"
               className={`absolute inset-0 rounded-full blur-xl transition-all duration-1000 ${
                 isActive && phase === 'Hold'
                   ? 'opacity-90 scale-110 bg-sage-200/80'
@@ -208,23 +214,29 @@ export const BreathingSection: React.FC = () => {
 
           <div className="flex items-center gap-4 mt-6 z-10">
             <button
+              type="button"
               onClick={handleToggleStart}
-              className="px-8 py-4 rounded-full bg-sage-700 hover:bg-sage-600 text-white font-medium text-sm transition-all duration-300 shadow-xs cursor-pointer flex items-center gap-2.5"
+              className="px-8 py-4 rounded-full bg-sage-700 hover:bg-sage-800 text-stone-50 font-semibold text-sm transition-all duration-300 shadow-xs cursor-pointer flex items-center gap-2.5"
             >
-              {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-white" />}
+              {isActive ? (
+                <Pause aria-hidden="true" className="w-4 h-4" />
+              ) : (
+                <Play aria-hidden="true" className="w-4 h-4 fill-stone-50" />
+              )}
               <span>{isActive ? 'Pause Practice' : `Begin ${pattern.name.split(' (')[0]}`}</span>
             </button>
             <button
+              type="button"
+              aria-label="Reset breath session"
               onClick={handleReset}
               className="p-3.5 rounded-full bg-stone-200/80 hover:bg-stone-200 text-stone-700 cursor-pointer transition-colors"
-              title="Reset session"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw aria-hidden="true" className="w-4 h-4" />
             </button>
           </div>
 
           <div className="mt-8 pt-6 border-t border-stone-200/50 text-xs text-stone-500 font-light max-w-lg z-10 flex items-center justify-center gap-2">
-            <Heart className="w-3.5 h-3.5 text-sage-600 shrink-0" />
+            <Heart aria-hidden="true" className="w-3.5 h-3.5 text-sage-600 shrink-0" />
             <span>
               Invitational practice: You are free to pause, open your eyes, or adjust your breath
               whenever you wish.

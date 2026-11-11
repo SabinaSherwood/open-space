@@ -29,7 +29,7 @@ const PILLARS: PillarItem[] = [
     shortDesc:
       'Inspired by psychiatrist Iain McGilchrist’s research on brain lateralization. Fostering the right hemisphere’s capacity for holistic, embodied understanding.',
     fullDetail:
-      'Dr. Iain McGilchrist’s work highlights two distinct modes of attention: the left hemisphere’s re-presentational, categorizing, detail-oriented focus, and the right hemisphere’s present-moment, relational, context-rich awareness. Modern culture heavily over-privileges left-hemisphere mechanical analysis. Open Space offers tools specifically designed to invite a gentle shift back into right-hemisphere wholeness.',
+      'Dr. Iain McGilchrist’s work highlights two distinct modes of attention: the left hemisphere’s re-presentational, categorizing, detail-oriented focus, and the right hemisphere’s present-moment, relational, context-rich awareness. Modern culture heavily over-privileges left-hemisphere mechanical analysis. Quiet Ground offers tools specifically designed to invite a gentle shift back into right-hemisphere wholeness.',
     practiceTakeaway:
       'In practice: Rather than viewing thoughts as problems to fix, attention expands to encompass the broad context, somatic sensations, and silent space holding them.',
   },
@@ -106,11 +106,14 @@ export const ApproachSection: React.FC = () => {
                 </div>
 
                 <button
+                  type="button"
+                  aria-expanded={isExpanded}
                   onClick={() => handleToggle(pillar.id)}
                   className="mt-6 pt-4 text-xs font-medium text-sage-700 hover:text-sage-800 flex items-center gap-1.5 cursor-pointer self-start"
                 >
                   <span>{isExpanded ? 'Show less' : 'Read full concept'}</span>
                   <ChevronDown
+                    aria-hidden="true"
                     className={`w-3.5 h-3.5 transition-transform duration-300 ${
                       isExpanded ? 'rotate-180' : ''
                     }`}

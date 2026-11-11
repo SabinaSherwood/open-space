@@ -35,6 +35,8 @@ export const PracticeSection: React.FC<PracticeSectionProps> = ({
   const [savedBanner, setSavedBanner] = useState<boolean>(false);
 
   const stage = PRACTICE_STAGES[stageIdx];
+  const totalStageSeconds = stage.durationMinutes * 60;
+  const promptCount = stage.guidanceText.length;
 
   useEffect(() => {
     setIsRunning(false);
@@ -50,23 +52,38 @@ export const PracticeSection: React.FC<PracticeSectionProps> = ({
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | undefined;
     if (isRunning && secondsLeft > 0) {
+      const stepDuration = Math.max(1, Math.floor(totalStageSeconds / promptCount));
       intervalId = setInterval(() => {
-        setSecondsLeft((prev) => prev - 1);
+        setSecondsLeft((prev) => {
+          const next = prev - 1;
+          const elapsed = totalStageSeconds - next;
+          if (next > 0 && elapsed > 0 && elapsed % stepDuration === 0) {
+            setPromptIdx((idx) => Math.min(promptCount - 1, idx + 1));
+          }
+          return next;
+        });
       }, 1000);
     } else if (secondsLeft === 0 && isRunning) {
       setIsRunning(false);
-      soundscape.playGentleChime(528);
+      soundscape.playGentleChime(329.63);
+      if (droneEnabled) {
+        soundscape.stopSoundscape();
+      }
     }
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isRunning, secondsLeft]);
+  }, [isRunning, secondsLeft, totalStageSeconds, promptCount, droneEnabled]);
 
   const handleToggleRun = () => {
     if (isRunning) {
       setIsRunning(false);
       soundscape.stopSoundscape();
     } else {
+      if (secondsLeft === 0) {
+        setSecondsLeft(totalStageSeconds);
+        setPromptIdx(0);
+      }
       setIsRunning(true);
       if (droneEnabled) {
         soundscape.setVolume(volume);
@@ -114,15 +131,16 @@ export const PracticeSection: React.FC<PracticeSectionProps> = ({
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-14">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sage-100 text-sage-800 text-xs font-medium mb-3 sm:mb-4">
-            <Sparkles className="w-3.5 h-3.5 text-sage-600" />
+            <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-sage-600" />
             <span>Interactive Guided Session</span>
           </div>
           <h2 className="font-display text-2xl sm:text-4xl lg:text-5xl font-medium text-stone-900 mb-4 sm:mb-6">
-            Enter the Space
+            Enter Quiet Ground
           </h2>
           <p className="text-stone-700 text-sm sm:text-lg font-light leading-relaxed">
             Follow Dr. Daniel P. Brown’s gradual Mahamudra map at your own natural pace. Each stage
-            offers invitational guidance, gentle ambient frequencies, and non-judgmental inquiry.
+            offers invitational guidance, warm low-register acoustic drones, and hands-free prompt
+            progression.
           </p>
         </div>
 
@@ -132,16 +150,18 @@ export const PracticeSection: React.FC<PracticeSectionProps> = ({
             return (
               <button
                 key={item.id}
+                type="button"
+                aria-pressed={isSelected}
                 onClick={() => setStageIdx(idx)}
-                className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-300 cursor-pointer flex items-center gap-2 shrink-0 ${
+                className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-300 cursor-pointer flex items-center gap-2 shrink-0 ${
                   isSelected
-                    ? 'bg-sage-700 text-white shadow-xs'
+                    ? 'bg-sage-700 text-stone-50 shadow-xs'
                     : 'bg-stone-50 text-stone-700 hover:bg-stone-200/70 border border-stone-200/60'
                 }`}
               >
                 <span
                   className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full text-[10px] flex items-center justify-center font-bold ${
-                    isSelected ? 'bg-sage-800 text-sage-100' : 'bg-stone-200 text-stone-700'
+                    isSelected ? 'bg-stone-50 text-sage-800' : 'bg-stone-200 text-stone-700'
                   }`}
                 >
                   {item.stageNumber}
@@ -176,12 +196,13 @@ export const PracticeSection: React.FC<PracticeSectionProps> = ({
 
             <div className="relative py-6 sm:py-12 flex flex-col items-center justify-center min-h-[260px] sm:min-h-[320px]">
               <div
+                aria-hidden="true"
                 className={`absolute w-[200px] h-[200px] sm:w-[300px] sm:h-[300px] rounded-full blur-2xl transition-all duration-1000 ${
                   isRunning ? 'bg-sage-100/80 scale-110' : 'bg-stone-200/50 scale-95'
                 }`}
               />
               <div
-                className={`w-[190px] h-[190px] sm:w-[270px] sm:h-[270px] bg-gradient-to-br from-sage-100 via-stone-100 to-sage-200/70 border border-sage-200/50 flex flex-col items-center justify-center p-4 sm:p-6 text-center shadow-inner relative z-10 transition-all ${
+                className={`w-[205px] h-[205px] sm:w-[280px] sm:h-[280px] bg-gradient-to-br from-sage-100 via-stone-100 to-sage-200/70 border border-sage-200/50 flex flex-col items-center justify-center p-5 sm:p-6 text-center shadow-inner relative z-10 transition-all ${
                   isRunning ? 'animate-breathe' : 'organic-blob-1'
                 }`}
               >
@@ -190,31 +211,36 @@ export const PracticeSection: React.FC<PracticeSectionProps> = ({
                     Resting in Awareness
                   </span>
                 )}
-                <p className="text-xs sm:text-sm text-stone-700 font-light italic max-w-[150px] sm:max-w-[210px] leading-relaxed">
+                <p className="text-xs sm:text-sm text-stone-800 font-light italic max-w-[165px] sm:max-w-[220px] leading-relaxed">
                   &ldquo;{stage.guidanceText[promptIdx]}&rdquo;
                 </p>
               </div>
 
               <div className="mt-6 sm:mt-8 flex items-center gap-3 relative z-10">
                 <button
+                  type="button"
+                  aria-label="Previous guidance prompt"
                   onClick={() => setPromptIdx(Math.max(0, promptIdx - 1))}
                   disabled={promptIdx === 0}
                   className="p-2 rounded-full bg-stone-100 text-stone-600 disabled:opacity-30 cursor-pointer hover:bg-stone-200 transition-colors"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft aria-hidden="true" className="w-4 h-4" />
                 </button>
                 <span className="text-xs text-stone-600 font-light flex items-center gap-1.5">
-                  <Leaf className="w-3.5 h-3.5 text-sage-600 shrink-0" />
-                  <span>meditation</span>
+                  <Leaf aria-hidden="true" className="w-3.5 h-3.5 text-sage-600 shrink-0" />
+                  <span>
+                    Prompt {promptIdx + 1} of {promptCount}
+                    {isRunning ? ' · Auto-pacing' : ''}
+                  </span>
                 </span>
                 <button
-                  onClick={() =>
-                    setPromptIdx(Math.min(stage.guidanceText.length - 1, promptIdx + 1))
-                  }
-                  disabled={promptIdx === stage.guidanceText.length - 1}
+                  type="button"
+                  aria-label="Next guidance prompt"
+                  onClick={() => setPromptIdx(Math.min(promptCount - 1, promptIdx + 1))}
+                  disabled={promptIdx === promptCount - 1}
                   className="p-2 rounded-full bg-stone-100 text-stone-600 disabled:opacity-30 cursor-pointer hover:bg-stone-200 transition-colors"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight aria-hidden="true" className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -222,72 +248,81 @@ export const PracticeSection: React.FC<PracticeSectionProps> = ({
             <div className="pt-6 sm:pt-8 border-t border-stone-200/60 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-4">
               <div className="flex flex-wrap items-center justify-between sm:justify-start gap-2.5 sm:gap-3">
                 <button
+                  type="button"
                   onClick={handleToggleRun}
-                  className="flex-1 sm:flex-none px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-sage-700 hover:bg-sage-600 text-white text-xs sm:text-sm font-medium transition-all duration-300 shadow-xs cursor-pointer flex items-center justify-center gap-2"
+                  className="flex-1 sm:flex-none px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-sage-700 hover:bg-sage-800 text-stone-50 text-xs sm:text-sm font-semibold transition-all duration-300 shadow-xs cursor-pointer flex items-center justify-center gap-2"
                 >
                   {isRunning ? (
-                    <Pause className="w-4 h-4" />
+                    <Pause aria-hidden="true" className="w-4 h-4" />
                   ) : (
-                    <Play className="w-4 h-4 fill-white" />
+                    <Play aria-hidden="true" className="w-4 h-4 fill-stone-50" />
                   )}
                   <span>{isRunning ? 'Pause Practice' : 'Begin Practice'}</span>
                 </button>
 
                 <button
+                  type="button"
+                  aria-label="Reset practice timer"
                   onClick={() => {
                     setIsRunning(false);
                     setSecondsLeft(stage.durationMinutes * 60);
+                    setPromptIdx(0);
                     soundscape.stopSoundscape();
                   }}
                   className="p-2.5 sm:p-3 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 cursor-pointer shrink-0"
-                  title="Reset timer"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw aria-hidden="true" className="w-4 h-4" />
                 </button>
 
                 <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-full bg-stone-100 border border-stone-200/60 shrink-0">
                   <button
+                    type="button"
+                    aria-pressed={droneEnabled}
+                    aria-label={droneEnabled ? 'Mute warm acoustic drone' : 'Enable warm acoustic drone'}
                     onClick={handleToggleDrone}
                     className={`p-1.5 rounded-full transition-colors cursor-pointer ${
                       droneEnabled
                         ? 'text-sage-700 hover:bg-sage-200/50'
                         : 'text-stone-400 hover:bg-stone-200'
                     }`}
-                    title={droneEnabled ? 'Mute ambient drone' : 'Enable ambient drone'}
                   >
                     {droneEnabled ? (
-                      <Volume2 className="w-4 h-4" />
+                      <Volume2 aria-hidden="true" className="w-4 h-4" />
                     ) : (
-                      <VolumeX className="w-4 h-4" />
+                      <VolumeX aria-hidden="true" className="w-4 h-4" />
                     )}
                   </button>
                   {droneEnabled && (
-                    <input
-                      id="practice-drone-volume"
-                      name="practice-drone-volume"
-                      aria-label="Practice ambient drone volume"
-                      type="range"
-                      min="0.05"
-                      max="0.5"
-                      step="0.01"
-                      value={volume}
-                      onChange={(e) => {
-                        const nextVol = parseFloat(e.target.value);
-                        setVolume(nextVol);
-                        soundscape.setVolume(nextVol);
-                      }}
-                      className="w-16 sm:w-20 accent-sage-600 h-1 bg-stone-300 rounded-lg appearance-none cursor-pointer mr-2"
-                      title="Adjust ambient volume"
-                    />
+                    <>
+                      <label htmlFor="practice-drone-volume" className="visually-hidden">
+                        Practice ambient drone volume
+                      </label>
+                      <input
+                        id="practice-drone-volume"
+                        name="practice-drone-volume"
+                        type="range"
+                        min="0.05"
+                        max="0.5"
+                        step="0.01"
+                        value={volume}
+                        onChange={(e) => {
+                          const nextVol = parseFloat(e.target.value);
+                          setVolume(nextVol);
+                          soundscape.setVolume(nextVol);
+                        }}
+                        className="w-16 sm:w-20 accent-sage-600 h-1 bg-stone-300 rounded-lg appearance-none cursor-pointer mr-2"
+                      />
+                    </>
                   )}
                 </div>
               </div>
 
               <button
+                type="button"
                 onClick={onOpenGrounding}
                 className="w-full sm:w-auto px-4 py-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <Heart className="w-3.5 h-3.5 text-sage-600" />
+                <Heart aria-hidden="true" className="w-3.5 h-3.5 text-sage-600" />
                 <span>Pause &amp; Ground</span>
               </button>
             </div>
@@ -302,31 +337,38 @@ export const PracticeSection: React.FC<PracticeSectionProps> = ({
             </div>
 
             <div className="bg-stone-50 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 border border-stone-200/80 shadow-2xs">
-              <h4 className="font-display font-medium text-stone-900 text-base mb-1.5 sm:mb-2">
+              <label
+                htmlFor="practice-reflection-notes"
+                className="font-display font-medium text-stone-900 text-base mb-1.5 sm:mb-2 block"
+              >
                 Reflection
-              </h4>
-              <p className="text-xs text-stone-600 font-light mb-3">
+              </label>
+              <p
+                id="practice-reflection-hint"
+                className="text-xs text-stone-600 font-light mb-3"
+              >
                 Your body might feel a quiet sense of support or grounding now. You can save your
                 observation or insight to reflective notes.
               </p>
               <textarea
                 id="practice-reflection-notes"
                 name="practice-reflection-notes"
-                aria-label="Practice reflection notes"
+                aria-describedby="practice-reflection-hint"
                 value={reflectionText}
                 onChange={(e) => setReflectionText(e.target.value)}
-                placeholder="Optionally write your non-judgmental observation or insight..."
+                placeholder="Example: Shoulders softened on the exhale..."
                 rows={3}
-                className="w-full p-3 sm:p-3.5 rounded-xl bg-stone-100/80 border border-stone-200/70 text-xs text-stone-800 placeholder-stone-400 focus:outline-hidden focus:ring-1 focus:ring-sage-600 resize-none font-sans"
+                className="w-full p-3 sm:p-3.5 rounded-xl bg-stone-100/80 border border-stone-200/70 text-xs text-stone-800 placeholder-stone-400 focus:outline-hidden focus:ring-1 focus:ring-sage-600 resize-y font-sans"
               />
               <button
+                type="button"
                 onClick={handleSaveReflection}
                 disabled={!reflectionText.trim()}
-                className="mt-3 w-full py-2.5 rounded-full bg-stone-800 hover:bg-stone-900 disabled:opacity-40 text-stone-50 text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2"
+                className="mt-3 w-full py-2.5 rounded-full bg-stone-800 hover:bg-stone-900 disabled:opacity-40 text-stone-50 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
                 {savedBanner ? (
                   <>
-                    <CircleCheckBig className="w-3.5 h-3.5 text-sage-600" />
+                    <CircleCheckBig aria-hidden="true" className="w-3.5 h-3.5 text-sage-300" />
                     <span>Saved to Reflective Journal</span>
                   </>
                 ) : (
